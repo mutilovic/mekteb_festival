@@ -12,7 +12,6 @@ namespace Mekteb_Festival.Data
 
         public int RegistrationId { get; set; }
 
-        [JsonIgnore]
         public Registration? Registration { get; set; }
     }
 

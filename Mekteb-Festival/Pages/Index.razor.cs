@@ -24,6 +24,22 @@ namespace Mekteb_Festival.Pages
         private readonly string registracijeCachePath = "wwwroot/temp/registracijeCache.json";
         private readonly string dzematStatsCachePath = "wwwroot/temp/dzematStatsCache.json";
 
+        // DTOs für die Serialisierung
+        public class TakmicarDto
+        {
+            public int Id { get; set; }
+            public string ImePrezime { get; set; }
+        }
+
+        public class RegistrationDto
+        {
+            public int Id { get; set; }
+            public string Dzemat { get; set; }
+            public List<TakmicarDto> Takmicari { get; set; } = new();
+            public int BrojOdraslih { get; set; }
+            public int MaliDjeca { get; set; }
+        }
+
         protected override async Task OnInitializedAsync()
         {
             Logger.LogInformation("OnInitializedAsync gestartet");
@@ -33,29 +49,44 @@ namespace Mekteb_Festival.Pages
             {
                 Takmicari = new List<Takmicar> { new(), new(), new() }
             };
+
             string directoryPath = Path.GetDirectoryName(registracijeCachePath)!;
             if (!Directory.Exists(directoryPath))
             {
                 Directory.CreateDirectory(directoryPath); // Verzeichnis erstellen, falls es nicht existiert
             }
+
             // Versuche Cache aus Datei zu lesen
-            List<Registration> registracije;
+            List<RegistrationDto> registracijeDto;
             if (File.Exists(registracijeCachePath))
             {
                 Logger.LogInformation("RegistracijeCache aus Datei geladen.");
                 var json = await File.ReadAllTextAsync(registracijeCachePath);
-                registracije = JsonSerializer.Deserialize<List<Registration>>(json) ?? new List<Registration>();
+                registracijeDto = JsonSerializer.Deserialize<List<RegistrationDto>>(json) ?? new List<RegistrationDto>();
             }
             else
             {
                 // Hole aus DB und speichere in Datei
-                registracije = await Db.Registrations.Include(r => r.Takmicari).ToListAsync();
-                var json = JsonSerializer.Serialize(registracije);
+                var registracije = await Db.Registrations.Include(r => r.Takmicari).ToListAsync();
+                registracijeDto = registracije.Select(r => new RegistrationDto
+                {
+                    Id = r.Id,
+                    Dzemat = r.Dzemat,
+                    Takmicari = r.Takmicari.Select(t => new TakmicarDto
+                    {
+                        Id = t.Id,
+                        ImePrezime = t.ImePrezime
+                    }).ToList(),
+                    BrojOdraslih = r.BrojOdraslih,
+                    MaliDjeca = r.MaliDjeca
+                }).ToList();
+
+                var json = JsonSerializer.Serialize(registracijeDto);
                 await File.WriteAllTextAsync(registracijeCachePath, json);
                 Logger.LogWarning("EF-Zugriff Nr. {Count}", Interlocked.Increment(ref dbHits));
             }
 
-            ukupnoPrijavljenih = registracije.Sum(r => r.BrojOdraslih + r.MaliDjeca + r.Takmicari.Count);
+            ukupnoPrijavljenih = registracijeDto.Sum(r => r.BrojOdraslih + r.MaliDjeca + r.Takmicari.Count);
 
             // Versuche DzematStats aus Datei zu lesen
             Dictionary<string, int> stats;
@@ -72,7 +103,7 @@ namespace Mekteb_Festival.Pages
                     .Select(dz => new
                     {
                         Dzemat = dz,
-                        Broj = registracije
+                        Broj = registracijeDto
                                 .Where(r => r.Dzemat == dz)
                                 .Sum(r => r.BrojOdraslih + r.MaliDjeca + r.Takmicari.Count)
                     })
