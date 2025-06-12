@@ -1,0 +1,59 @@
+﻿@page "/admin"
+@attribute [Authorize]
+@using Mekteb_Festival.Data
+@using Mekteb_Festival.Services
+@using Microsoft.EntityFrameworkCore
+<h3>Pregled prijava</h3>
+
+<div class="mb-3">
+    <label>Džemat</label>
+    <InputSelect @bind-Value="selectedDzemat" class="form-control">
+        <option value="">-- Svi džemati --</option>
+        @foreach (var dz in Dzemati)
+        {
+            <option value="@dz">@dz</option>
+        }
+    </InputSelect>
+</div>
+<RadzenCard Style="margin-bottom: 1rem;">
+    <p><strong>Ukupno prijavljenih:</strong> @ukupnoUcesnika</p>
+    <p>Odraslih: @ukupnoOdraslih</p>
+    <p>Djece ukupno: @(ukupnoTakmicara + ukupnoMalaDjeca)</p>
+    <p>• Mekteblije: @ukupnoTakmicara</p>
+    <p>• Mala djeca: @ukupnoMalaDjeca</p>
+</RadzenCard>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Džemat</th>
+            <th>Ime i prezime</th>
+            <th>Odrasli</th>
+            <th>Mekteblije</th>
+            <th>Broj ostale djece</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in FiltriranePrijave)
+        {
+            <tr>
+                <td>@r.Dzemat</td>
+                <td>@r.ImePrezime</td>
+                <td>@r.BrojOdraslih</td>
+                <td>
+                    <ul>
+                        @foreach (var t in r.Takmicari)
+                        {
+                            <li>@t.ImePrezime</li>
+                        }
+                    </ul>
+                </td>
+                <td>@r.MaliDjeca</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<button class="btn btn-success me-2" @onclick="ExportExcel">📊 Exportuj u Excel</button>
+<button class="btn btn-danger" @onclick="ExportPdf">📄 Exportuj u PDF</button>
+
+

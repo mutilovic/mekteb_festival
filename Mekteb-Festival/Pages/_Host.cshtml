@@ -1,0 +1,60 @@
+﻿@page "/"
+@using Microsoft.AspNetCore.Components.Web
+@namespace Mekteb_Festival.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- HTML Meta Tags -->
+    <title>MEKTEB FESTIVAL</title>
+    <meta name="description" content="Za sve učenike i roditelje džemata MEDŽLISA NRW. Program, fudbal, atletika, zabavne igre, radionice, poslastice i roštilj">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:url" content="http://mekteb-festival-fmh9fwdvdmhzdzad.westeurope-01.azurewebsites.net">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="MEKTEB FESTIVAL 06. JULI - HAGEN">
+    <meta property="og:description" content="Za sve učenike i roditelje džemata MEDŽLISA NRW. Program, fudbal, atletika, zabavne igre, radionice, poslastice i roštilj">
+    <meta property="og:image" content="http://mekteb-festival-fmh9fwdvdmhzdzad.westeurope-01.azurewebsites.net/images/flyer.jpg">
+    <meta property="og:image:width" content="1080">
+    <meta property="og:image:height" content="1080">
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="~/" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link href="css/site.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link href="Mekteb-Festival.styles.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="favicon.png"/>
+    <link href="_content/Radzen.Blazor/css/default-base.css" rel="stylesheet" />
+    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />    
+</head>
+<body>
+    <component type="typeof(App)" render-mode="ServerPrerendered" />
+
+    <div id="blazor-error-ui">
+        <environment include="Staging,Production">
+            An error has occurred. This application may no longer respond until reloaded.
+        </environment>
+        <environment include="Development">
+            An unhandled exception has occurred. See browser dev tools for details.
+        </environment>
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+
+    <script src="_framework/blazor.server.js"></script>
+    <script>
+        window.downloadFile = (filename, base64, mimeType) => {
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = `data:${mimeType};base64,${base64}`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+    </script>
+    <script src="_content/Radzen.Blazor/Radzen.Blazor.js"></script>
+</body>
+</html>

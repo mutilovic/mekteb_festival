@@ -1,0 +1,14 @@
+﻿@inject NavigationManager Nav
+
+@code {
+    protected override void OnInitialized()
+    {
+        var returnUrl = Nav.ToBaseRelativePath(Nav.Uri);
+
+        // Füge führenden Slash manuell hinzu, falls nicht vorhanden
+        if (!returnUrl.StartsWith("/"))
+            returnUrl = "/" + returnUrl;
+
+        Nav.NavigateTo($"/Identity/Account/Login?returnUrl={returnUrl}", true);
+    }
+}

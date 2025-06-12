@@ -1,0 +1,28 @@
+﻿Aachen
+Ahlen
+Bielefeld
+Bochum
+Bonn
+Castrop-Rauxel
+Dortmund
+Dortmund Bkzs
+Duisburg
+Duisburg SAN
+Düren
+Düsseldorf
+Essen
+Hagen
+Hamm
+Horstmar
+Kamp-Lintfort
+Köln
+Löhne
+Lippstadt
+Mülheim a.d.Ruhr
+Münster
+Oberhausen
+Paderborn
+Siegen
+Velbert
+Wilten
+Wuppertal

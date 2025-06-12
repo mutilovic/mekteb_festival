@@ -1,0 +1,15 @@
+﻿@using Microsoft.AspNetCore.Identity
+@* Dummy-Login-Partial, um Identity Layout zufrieden zu stellen *@
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <form method="post" asp-area="Identity" asp-page="/Account/Logout" id="logoutForm" class="form-inline">
+        <button type="submit" class="btn btn-link">Odjavi se</button>
+    </form>
+}
+else
+{
+    <a class="btn btn-link" asp-area="Identity" asp-page="/Account/Login">Administracija</a>
+}

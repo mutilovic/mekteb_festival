@@ -1,0 +1,103 @@
+﻿@page "/"
+@using Mekteb_Festival.Data
+@attribute [AllowAnonymous]
+@inject DialogService DialogService
+
+<RadzenCard Class="p-4 mt-4 shadow-md" Style="max-width: 1200px; margin: auto;">
+    <div class="text-center mb-4">
+        <h1 class="text-primary text-uppercase">Mekteb Festival</h1>
+        <h4 class="text-muted">Prijava za sve učenike mekteba i roditelje</h4>
+    </div>
+
+    <div class="text-center mb-4">
+        <a href="images/flyer.jpg" target="_blank">
+            <img src="images/flyer.jpg" alt="Mekteb Festival" style="max-width: 300px;" class="rounded shadow" />
+        </a>
+    </div>
+
+    @if (ukupnoPrijavljenih > 0)
+    {
+<RadzenAlert Style="background-color: #35A0D7; color: white;">
+    <strong>Do sada prijavljeno:</strong> @ukupnoPrijavljenih učesnika
+    <br />
+            <a href="#dzematStatsSection"
+               style="color: #f0f0f0; font-weight: 500; text-decoration: none;"
+               onmouseover="this.style.color='#eeeeee'"
+               onmouseout="this.style.color='#ffffff'">
+                ↓ Pogledaj prijavljene po džematima ↓
+            </a>
+
+</RadzenAlert>
+    }
+
+    <RadzenRow>
+        <!-- Formular links -->
+        <RadzenColumn Width="7">
+            @if (!success)
+            {
+                <RadzenCard Class="p-4 mt-4 shadow-md">
+                    <RadzenTemplateForm TItem="Registration" Data="@model" Submit="@HandleValidSubmit">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        @if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <RadzenAlert AlertStyle="AlertStyle.Danger" ShowIcon="true" Variant="Variant.Flat" Shade="Shade.Lighter">
+                                @errorMessage
+                            </RadzenAlert>
+                        }
+
+                        <RadzenLabel>Odaberite džemat:</RadzenLabel>
+                        <RadzenDropDown @bind-Value="model.Dzemat" Data="@Dzemati" Placeholder="Odaberite džemat" Style="width: 100%;" Class="mb-3" Name="Dzemat" />
+
+                        <RadzenLabel>Ime i prezime roditelja / staratelja:</RadzenLabel>
+                        <RadzenTextBox @bind-Value="model.ImePrezime" Placeholder="Ime i prezime staratelja" Style="width: 100%;" Name="ImePrezime" Class="mb-3" />
+
+                        <RadzenLabel>Prijavljujem ukupno odraslih osoba (uključujući sebe):</RadzenLabel>
+                        <RadzenNumeric @bind-Value="model.BrojOdraslih" Style="width: 100%;" Name="BrojOdraslih" Placeholder="Broj odraslih učesnika" Class="mb-3" />
+
+                        <div class="mb-3">
+                            <label class="form-label">Prijavljujem djecu mektebskog uzrasta:</label>
+                            @foreach (var t in model.Takmicari)
+                            {
+                                <div class="d-flex align-items-center mb-2">
+                                    <RadzenTextBox @bind-Value="t.ImePrezime" Placeholder="Ime i prezime djeteta" Style="flex-grow: 1;" Class="me-2" />
+                                    <RadzenButton Text="Ukloni" Icon="close" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Click="() => RemoveTakmicar(t)" />
+                                </div>
+                            }
+                            <RadzenButton Text="Dodaj dijete" Icon="add_circle" Click="@AddTakmicar" ButtonStyle="ButtonStyle.Secondary" Class="mt-2" />
+                        </div>
+
+                        <RadzenLabel>Prijavljujem ukupno djece koja nisu mektebskog uzrasta:</RadzenLabel>
+                        <RadzenNumeric @bind-Value="model.MaliDjeca" Style="width: 100%;" Name="MaliDjeca" Placeholder="Broj male djece (ispod mektebskog uzrasta)" Class="mb-3" />
+
+                        <RadzenButton Text="Pošalji prijavu" ButtonStyle="ButtonStyle.Primary" Icon="send" Type="ButtonType.Submit" Style="width: 100%;" />
+                    </RadzenTemplateForm>
+                </RadzenCard>
+            }
+            else
+            {
+                <RadzenAlert AllowClose="false" AlertStyle="AlertStyle.Success" Variant="Variant.Flat" Shade="Shade.Lighter">
+                    Prijava je uspješno poslana!
+                </RadzenAlert>
+            }
+        </RadzenColumn>
+
+        <!-- Statistik rechts -->
+        <RadzenColumn Width="5" id="dzematStatsSection">
+            <RadzenCard Class="p-4 mt-4 shadow-md" Style="max-height: 600px; overflow-y: auto;">
+                <h5 class="mb-3">Prijavljeni po džematima</h5>
+
+                <RadzenDataList Data="@dzematStats" TItem="KeyValuePair<string, int>" Style="width: 100%;" Class="p-0">
+                    <Template Context="item">
+                        <div class="d-flex justify-content-between align-items-center" style="padding: 4px 0; border-bottom: 1px solid #eee; font-size: 0.9rem;">
+                            <span>@item.Key</span>
+                            <strong>@item.Value</strong>
+                        </div>
+                    </Template>
+                </RadzenDataList>
+            </RadzenCard>
+        </RadzenColumn>
+
+    </RadzenRow>
+</RadzenCard>
